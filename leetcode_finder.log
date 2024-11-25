@@ -1,0 +1,9 @@
+2024-11-24 19:52:28,950 - INFO - Extracted LinkedIn username: ritesh-verma-techpreneur
+2024-11-24 19:52:28,950 - INFO - LinkedIn Username: ritesh-verma-techpreneur
+2024-11-24 19:52:28,951 - INFO - Checking LeetCode profile for username: ritesh-verma-techpreneur
+2024-11-24 19:52:29,181 - INFO - LeetCode profile not found via API.
+2024-11-24 19:52:29,182 - INFO - LeetCode profile not found using LinkedIn username.
+2024-11-24 19:52:38,305 - INFO - Extracted LinkedIn username: deipeypaanchal
+2024-11-24 19:52:38,305 - INFO - LinkedIn Username: deipeypaanchal
+2024-11-24 19:52:38,305 - INFO - Checking LeetCode profile for username: deipeypaanchal
+2024-11-24 19:52:38,490 - INFO - LeetCode profile found: https://leetcode.com/deipeypaanchal/

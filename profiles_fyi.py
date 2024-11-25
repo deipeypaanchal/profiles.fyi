@@ -1,3 +1,4 @@
+import streamlit as st
 import requests
 import logging
 
@@ -5,10 +6,8 @@ import logging
 logging.basicConfig(
     level=logging.INFO,  # Change to DEBUG for more detailed output
     format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("leetcode_finder.log"),
-        logging.StreamHandler()
-    ]
+    filename="leetcode_finder.log",
+    filemode='a'
 )
 
 def get_linkedin_username(linkedin_url):
@@ -57,39 +56,54 @@ def check_leetcode_profile_api(username):
         return None
 
 def main():
-    linkedin_url = input("Enter LinkedIn Profile URL: ").strip()
-    if not linkedin_url:
-        logging.error("No LinkedIn URL provided.")
-        print("No LinkedIn URL provided.")
-        return
+    st.title("LeetCode Profile Finder")
+    st.write("Enter a LinkedIn Profile URL to find the corresponding LeetCode profile.")
 
-    linkedin_username = get_linkedin_username(linkedin_url)
-    logging.info(f"LinkedIn Username: {linkedin_username}")
+    linkedin_url = st.text_input("LinkedIn Profile URL")
 
-    # First attempt with LinkedIn username
-    leetcode_profile = check_leetcode_profile_api(linkedin_username)
-    if leetcode_profile:
-        print(f"LeetCode profile found: {leetcode_profile}")
-        return
+    if st.button("Find LeetCode Profile"):
+        if not linkedin_url:
+            logging.error("No LinkedIn URL provided.")
+            st.error("Please provide a LinkedIn URL.")
+            return
 
-    # Optionally ask for GitHub username
-    use_github = input("LeetCode profile not found using LinkedIn username. Do you want to provide a GitHub username to check? (yes/no): ").strip().lower()
-    if use_github == 'yes':
-        github_username = input("Enter GitHub Username: ").strip()
-        if github_username:
-            logging.info(f"GitHub Username provided: {github_username}")
-            leetcode_profile = check_leetcode_profile_api(github_username)
-            if leetcode_profile:
-                print(f"LeetCode profile found using GitHub username: {leetcode_profile}")
-                return
-            else:
-                logging.info("LeetCode profile not found using GitHub username.")
+        linkedin_username = get_linkedin_username(linkedin_url)
+        logging.info(f"LinkedIn Username: {linkedin_username}")
+
+        # First attempt with LinkedIn username
+        leetcode_profile = check_leetcode_profile_api(linkedin_username)
+        if leetcode_profile:
+            st.success(f"LeetCode profile found: {leetcode_profile}")
+            st.markdown(f"[View LeetCode Profile]({leetcode_profile})")
+            return
         else:
-            logging.error("No GitHub username provided.")
-            print("No GitHub username provided.")
+            logging.info("LeetCode profile not found using LinkedIn username.")
+            st.warning("LeetCode profile not found using LinkedIn username.")
 
-    print("LeetCode profile not found.")
-    logging.info("LeetCode profile not found after all attempts.")
+            # Optionally ask for GitHub username
+            use_github = st.radio(
+                "LeetCode profile not found. Do you want to provide a GitHub username to check?",
+                ('Yes', 'No')
+            )
+            if use_github == 'Yes':
+                github_username = st.text_input("GitHub Username")
+                if st.button("Check GitHub Username"):
+                    if github_username:
+                        logging.info(f"GitHub Username provided: {github_username}")
+                        leetcode_profile = check_leetcode_profile_api(github_username)
+                        if leetcode_profile:
+                            st.success(f"LeetCode profile found using GitHub username: {leetcode_profile}")
+                            st.markdown(f"[View LeetCode Profile]({leetcode_profile})")
+                            return
+                        else:
+                            logging.info("LeetCode profile not found using GitHub username.")
+                            st.error("LeetCode profile not found using GitHub username.")
+                    else:
+                        logging.error("No GitHub username provided.")
+                        st.error("Please provide a GitHub username.")
+            else:
+                st.info("LeetCode profile not found after all attempts.")
+                logging.info("LeetCode profile not found after all attempts.")
 
 if __name__ == "__main__":
     main()
